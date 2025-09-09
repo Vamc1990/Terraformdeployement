@@ -11,9 +11,7 @@ provider "azurerm" {
 }
 resource "azurerm_logic_app_workflow" "res-0" {
   enabled                            = true
-  integration_service_environment_id = ""
   location                           = "centralindia"
-  logic_app_integration_account_id   = ""
   name                               = "DNSzonereport"
   parameters = {
     "$connections" = "{\"office365\":{\"connectionId\":\"/subscriptions/e62a4643-1777-489d-8615-992e6eb09eda/resourceGroups/test-rg01/providers/Microsoft.Web/connections/office365-3\",\"connectionName\":\"office365-3\",\"id\":\"/subscriptions/e62a4643-1777-489d-8615-992e6eb09eda/providers/Microsoft.Web/locations/centralindia/managedApis/office365\"}}"
