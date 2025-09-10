@@ -7,36 +7,43 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  azureServiceConnection: 'AzureServiceConnection'
-  resourceGroup: 'test-rg01'
-  location: 'centralindia'
+  - name: terraformWorkingDirectory
+    value: '.'
 
-stages:
-- stage: Terraform_Deploy
-  displayName: 'Deploy Logic App via Terraform'
-  jobs:
-  - job: TerraformJob
-    displayName: 'Terraform Init and Apply'
-    steps:
-    - task: TerraformInstaller@1
-      displayName: 'Install Terraform'
-      inputs:
-        terraformVersion: '1.5.7'  # or your preferred version
+steps:
+# ✅ Authenticate using Azure DevOps service connection
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'AzureServiceConnection'  # Replace with your actual service connection name
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Setting Terraform environment variables from service connection"
+      echo "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$(az account show --query id -o tsv)"
+      echo "##vso[task.setvariable variable=ARM_TENANT_ID]$(az account show --query tenantId -o tsv)"
+      echo "##vso[task.setvariable variable=ARM_CLIENT_ID]$(az ad signed-in-user show --query objectId -o tsv)"
 
-    - task: AzureCLI@2
-      displayName: 'Terraform Init'
-      inputs:
-        azureSubscription: $(azureServiceConnection)
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          terraform init
+# ✅ Install Terraform
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
 
-    - task: AzureCLI@2
-      displayName: 'Terraform Apply'
-      inputs:
-        azureSubscription: $(azureServiceConnection)
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          terraform apply -auto-approve
+# ✅ Terraform Init
+- script: |
+    terraform init
+  displayName: 'Terraform Init'
+  workingDirectory: $(terraformWorkingDirectory)
+  env:
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+
+# ✅ Terraform Apply
+- script: |
+    terraform apply -auto-approve
+  displayName: 'Terraform Apply'
+  workingDirectory: $(terraformWorkingDirectory)
+  env:
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
