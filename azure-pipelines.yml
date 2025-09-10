@@ -43,6 +43,11 @@ steps:
     terraform apply -auto-approve
   displayName: 'Terraform Apply'
   workingDirectory: $(terraformWorkingDirectory)
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    environmentServiceNameAzureRM: 'AzureServiceConnection'
   env:
     ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
     ARM_TENANT_ID: $(ARM_TENANT_ID)
