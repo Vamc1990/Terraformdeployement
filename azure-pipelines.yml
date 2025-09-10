@@ -9,6 +9,14 @@ pool:
 variables:
   - name: terraformWorkingDirectory
     value: '.'
+  - name: ARM_SUBSCRIPTION_ID
+    value: 'e62a4643-1777-489d-8615-992e6eb09eda'
+  - name: ARM_CLIENT_ID
+    value: '1127d3be-e046-4934-80e4-b1a4d4087a9e'
+  - name: ARM_CLIENT_SECRET
+    value: '03abaf32-c664-4717-a3ee-de084cedd51b'
+  - name: ARM_TENANT_ID
+    value: '16b3c013-d300-468d-ac64-7eda0820b6d3'
 
 steps:
 # ✅ Install Terraform
@@ -18,22 +26,24 @@ steps:
 
 # ✅ Terraform Init
 - script: |
+    echo "Initializing Terraform..."
     terraform init
   displayName: 'Terraform Init'
   workingDirectory: $(terraformWorkingDirectory)
   env:
     ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-    ARM_TENANT_ID: $(ARM_TENANT_ID)
     ARM_CLIENT_ID: $(ARM_CLIENT_ID)
     ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
 
 # ✅ Terraform Apply
 - script: |
+    echo "Applying Terraform..."
     terraform apply -auto-approve
   displayName: 'Terraform Apply'
   workingDirectory: $(terraformWorkingDirectory)
   env:
     ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-    ARM_TENANT_ID: $(ARM_TENANT_ID)
     ARM_CLIENT_ID: $(ARM_CLIENT_ID)
     ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
