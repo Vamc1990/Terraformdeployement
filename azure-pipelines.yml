@@ -11,18 +11,6 @@ variables:
     value: '.'
 
 steps:
-# ✅ Authenticate using Azure DevOps service connection
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'AzureServiceConnection'  # Replace with your actual service connection name
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Setting Terraform environment variables from service connection"
-      echo "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID]$(az account show --query id -o tsv)"
-      echo "##vso[task.setvariable variable=ARM_TENANT_ID]$(az account show --query tenantId -o tsv)"
-      echo "##vso[task.setvariable variable=ARM_CLIENT_ID]$(az ad signed-in-user show --query objectId -o tsv)"
-
 # ✅ Install Terraform
 - task: TerraformInstaller@1
   inputs:
@@ -37,18 +25,15 @@ steps:
     ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
     ARM_TENANT_ID: $(ARM_TENANT_ID)
     ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
 
 # ✅ Terraform Apply
 - script: |
     terraform apply -auto-approve
   displayName: 'Terraform Apply'
   workingDirectory: $(terraformWorkingDirectory)
-- task: TerraformTask@5
-  inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    environmentServiceNameAzureRM: 'AzureServiceConnection'
   env:
     ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
     ARM_TENANT_ID: $(ARM_TENANT_ID)
     ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
