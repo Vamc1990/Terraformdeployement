@@ -6,16 +6,6 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  - name: terraformWorkingDirectory
-    value: '.'
-  - name: ARM_SUBSCRIPTION_ID
-    value: 'e62a4643-1777-489d-8615-992e6eb09eda'
-  - name: ARM_CLIENT_ID
-    value: '1127d3be-e046-4934-80e4-b1a4d4087a9e'
-  - name: ARM_TENANT_ID
-    value: '16b3c013-d300-468d-ac64-7eda0820b6d3'
-
 steps:
 # ✅ Install Terraform
 - task: TerraformInstaller@1
