@@ -6,11 +6,15 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+  variables:
+  terraformWorkingDirectory: '$(System.DefaultWorkingDirectory)/Terraform'
+  
 steps:
 # ✅ Install Terraform
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: 'latest'
+    
 
 # ✅ Terraform Init
 - script: |
